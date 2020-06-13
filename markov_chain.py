@@ -3,7 +3,7 @@ import random
 import sys
 import string 
 
-def gen_model(text, order=2):
+def gen_model(text, order):
     model = {}
     
     for i in range(0, len(text)- order):
@@ -24,14 +24,14 @@ def get_next_word(model, fragment):
             wr.append(w)
     return random.choice(wr)
 
-def generate_lyrics(lyrics, order=2, length=100):
+def generate_lyrics(lyrics, order=6, length=100):
     text = lyrics
-    text = text.translate(str.maketrans('', '', string.punctuation))
+    #text = text.translate(str.maketrans('', '', string.punctuation))
     text = text.split()
     lyrics = text
     model = gen_model(lyrics, order)
     curr_frag = lyrics[random.randint(0,len(lyrics)-1)]
-    output= ""
+    output= curr_frag + " "
     for j in range(length-order):
         new_word = get_next_word(model, curr_frag)
         output += new_word + " "

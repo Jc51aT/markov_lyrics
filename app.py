@@ -25,6 +25,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/lyrics', methods=['POST'])
+
 def lyrics():
     artist_name = request.form['artist']
     lines = int(request.form['lines'])
@@ -33,30 +34,26 @@ def lyrics():
         return redirect(url_for('index'))
 
     
-    artist = api.search_artist(artist_name, max_songs=3)
-    artist.save_lyrics('lyrics', overwrite=True)
-    # Opening JSON file 
+    artist = api.search_artist(artist_name, max_songs=100)
+    artist.save_lyrics('lyrics.json', overwrite=True)
     f = open('lyrics.json',)  
-    lyric_list = json.load(f)
+    artist_info = json.load(f)
     
 
     lyrics = ''
-    songs = lyric_list['songs']
-    print(type(songs[0]))
+    songs = artist_info['songs']
+    
     for lyric_dict in songs:
-        lyrics += lyric_dict['lyrics'].replace('...', '') + ' '
+        lyrics += lyric_dict['lyrics'] + ' '
 
 
     
     result = mc.generate_lyrics(lyrics)
+    output = []
+    for line in range(0, lines):
+        output.append(result)
 
-
-    #result = []
-    #for line in range(0, lines):
-    #    result.append(mc.generateString())
-    
-
-    return render_template('lyrics.html', result=result, artist=artist)
+    return render_template('lyrics.html', result=output, artist=artist)
 
 if __name__ == '__main__':
     app.run()
